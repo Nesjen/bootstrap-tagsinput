@@ -71,8 +71,14 @@
         item = $.trim(item);
       }
 
+      if(typeof item === "object" && dontPushVal) { // on load
+        item = {name: item.text(), id: item.attr('value')};
+      }
+
       if(typeof item === "string") {
-        item = {name: item, id: "new-" + Date.now()};
+        item = {name: item, id: "new-" + JSON.stringify({
+          name: item
+        })};
       }
 
       // Throw an error when trying to add an object while the itemValue option was not set
@@ -451,16 +457,14 @@
         self.remove($(event.target).closest('.tag').data('item'));
       }, self));
 
-      // Only add existing value as tags when using strings as tags
-      if (self.options.itemValue === defaultOptions.itemValue) {
-        if (self.$element[0].tagName === 'INPUT') {
-            self.add(self.$element.val());
-        } else {
-          $('option', self.$element).each(function() {
-            self.add($(this).attr('value'), true);
-          });
-        }
+      if (self.$element[0].tagName === 'INPUT') {
+          self.add(self.$element.val());
+      } else {
+        $('option', self.$element).each(function() {
+          self.add($(this), true);
+        });
       }
+
     },
 
     /**
@@ -627,11 +631,4 @@
       return found;
   }
 
-  /**
-   * Initialize tagsinput behaviour on inputs and selects which have
-   * data-role=tagsinput
-   */
-  $(function() {
-    $("input[data-role=tagsinput], select[multiple][data-role=tagsinput]").tagsinput();
-  });
 })(window.jQuery);
