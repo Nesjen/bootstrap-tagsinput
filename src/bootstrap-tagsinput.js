@@ -71,6 +71,10 @@
         item = $.trim(item);
       }
 
+      if(typeof item === "string") {
+        item = {name: item, id: "new-" + Date.now()};
+      }
+
       // Throw an error when trying to add an object while the itemValue option was not set
       if (typeof item === "object" && !self.objectItems)
         throw("Can't add objects when itemValue option is not set");
@@ -257,9 +261,6 @@
       var self = this;
 
       self.options = $.extend({}, defaultOptions, options);
-      // When itemValue is set, freeInput should always be false
-      if (self.objectItems)
-        self.options.freeInput = false;
 
       makeOptionItemFunction(self.options, 'itemValue');
       makeOptionItemFunction(self.options, 'itemText');
@@ -355,6 +356,7 @@
                 self.add(self.$input.val());
                 self.$input.val('');
               }
+              self.$input.typeahead('val', '');
           }, self));
         }
 
